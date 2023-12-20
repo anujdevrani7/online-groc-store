@@ -1,0 +1,184 @@
+<?php
+session_start();
+include_once("config.php");
+$current_url = urlencode($url=$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
+if(!(isset($_SESSION['adminUser'])))
+{
+			header("location:index.php");		
+}
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Welcome to online Grocery Shop</title>
+    <!-- Bootstrap core CSS -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet">
+    <!-- Fontawesome core CSS -->
+    <link href="assets/css/font-awesome.min.css" rel="stylesheet" />
+    <!--GOOGLE FONT -->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    <!--Slide Show Css -->
+    <link href="assets/ItemSlider/css/main-style.css" rel="stylesheet" />
+    <!-- custom CSS here -->
+    <link href="assets/css/style.css" rel="stylesheet" />
+	 <link rel="stylesheet" href="csst/normalize.css">
+        <link rel="stylesheet" href="csst/style.css">
+</head>
+<body>
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="index.php"><strong>Grocery</strong> Shop</a>
+            </div>
+			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+					<li><a href="index.php?logout=1">Logout</a></li>
+					<li><a href="updateProduct.php">Update Existing Product</a></li>
+					<li><a href="addProduct.php">Add Product</a></li>
+					<li><a href="ShopOrders.php">Shop Orders</a></li>
+				</ul>
+			</div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+	
+	
+	<!-- View Cart Box Start -->
+
+    <div class="container">
+      <h2>
+		Shop Details
+      </h2>
+      <table class="rules">
+        <thead>
+          <tr>
+            <th>
+              Shop Name
+            </th>
+            <th>
+              Shop Address
+            </th>
+			<th>
+              Total Product
+            </th>
+			<th>
+              Total Orders
+            </th>
+			<th>
+              Product in Category
+            </th>
+          </tr>
+        </thead>
+		<tbody>
+
+<?php
+/* $total=0;
+$user="anon_user";
+	if(isset($_SESSION['loginUser']))
+	{
+		$user=$_SESSION['loginUser'];
+	} */
+//$dbc=mysqli_connect("localhost","root","","online_groc") or die("Error connecting sql server");
+$results = $mysqli->query("SELECT * FROM shop");
+if($results){ 
+//echo '<pre>'; print_r($results); die;
+//fetch results set as object and output HTML
+//while($obj = $results->fetch_object()){
+	
+	//if($obj->Username==$user){
+	//echo '<pre>'; print_r($obj); die;
+		foreach($results as $obj => $shpDtl){
+			//echo '<pre>'; print_r($shpDtl); die;
+			$shopName = $shpDtl['shop_name'];
+			$Address = $shpDtl['address'];
+			$totalProd = $shpDtl['total_product'];
+			$totalOrde = $shpDtl['total_order'];
+			$productCat = $shpDtl['product_category'];
+			
+			$productCatNam = explode(',', $productCat);
+			$AllcatFood = array();
+		?>
+			
+			<tr class="record">
+				<td><?php echo $shopName; ?></td>
+				<td><?php echo $Address; ?></td>
+				<td><?php echo $totalProd; ?></td>
+				<td><?php echo $totalOrde; ?></td>
+				<td>
+					<?php foreach($productCatNam as $prodName){
+						//echo '<pre>'; print_r($prodName);
+						if($prodName == 'cat_personalcare'){
+							$catFood = 'Personal Care';
+						}else if($prodName == 'cat_bakery'){
+							$catFood = 'Bakery';
+						}else if($prodName == 'cat_brandedfood'){
+							$catFood = 'Branded Foods';
+						}else if($prodName == 'cat_fruit'){
+							$catFood = 'Fruit';
+						}else if($prodName == 'cat_grocery'){
+							$catFood = 'Groceries';
+						}else if($prodName == 'cat_meat'){
+							$catFood = 'Meat';
+						}else if($prodName == 'cat_beverages'){
+							$catFood = 'Beverages';
+						}
+						
+						array_push($AllcatFood,$catFood);
+						
+					}
+					$AllList= implode(', ',$AllcatFood);
+					print_r($AllList);
+					?>
+				
+				</td>
+			</tr>
+			
+			
+		<?php }?>
+		
+<?php }
+?>    
+</tbody> 
+<tfoot>
+          
+        </tfoot>  
+</table>
+</div>
+	
+            <!--Footer -->
+    <!-- /.col -->
+    <div class="col-md-12 end-box ">
+        &copy; 2016 | &nbsp; All Rights Reserved | &nbsp; www.onlinegroceries.com | &nbsp; 24x7 support | &nbsp; Email:teonlineproject@gmail.com
+    </div>
+    <!-- /.col -->
+    <!--Footer end -->
+    <!--Core JavaScript file  -->
+    <script src="assets/js/jquery-1.10.2.js"></script>
+    <!--bootstrap JavaScript file  -->
+    <script src="assets/js/bootstrap.js"></script>
+    <!--Slider JavaScript file  -->
+    <script src="assets/ItemSlider/js/modernizr.custom.63321.js"></script>
+    <script src="assets/ItemSlider/js/jquery.catslider.js"></script>
+    <script>
+        $(function () {
+
+            $('#mi-slider').catslider();
+
+        });
+		</script>
+
+<!-- Products List End -->
+</body>
+</html>
